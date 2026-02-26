@@ -102,22 +102,11 @@ router.post('/device-data', async (req, res) => {
     // Check if there's a pending SMS for this device
     const smsData = getPendingSMS(device_id);
     if (smsData) {
-      // Construct final SMS message with current sensor data
-      const finalMessage = `
-${smsData.message}
-
-Location:
-Lat: ${lat}
-Lng: ${lng}
-
-PPM: ${ppm}
-Time: ${new Date().toLocaleString()}
-      `.trim();
-
+      // Use the original message without adding extra details
       const response = {
         command: 'SEND_SMS',
         phone: smsData.phone,
-        message: finalMessage,
+        message: smsData.message,
       };
 
       // Clear pending SMS after sending

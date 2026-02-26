@@ -1,6 +1,7 @@
 import express from 'express';
 import Challan from '../models/Challan.js';
 import Vehicle from '../models/Vehicle.js';
+import { queueSMSForDevice } from '../utils/smsQueue.js';
 
 const router = express.Router();
 
@@ -88,6 +89,13 @@ router.post('/', async (req, res) => {
 
     const challan = new Challan(challanData);
     const savedChallan = await challan.save();
+
+    // Queue SMS to be sent when device sends next data
+    if (vehicle.phone && vehicle.phone !== '+91 00000 00000') {
+      const message = `Challan issued for your vehicle ${vehicle.number}. Amount: ₹${savedChallan.amount}. Type: ${savedChallan.type}. Please pay the challan at your earliest convenience.`;
+      queueSMSForDevice(vehicle.number, vehicle.phone, message);
+      console.log(`📩 Challan SMS queued for vehicle ${vehicle.number} (${vehicle.phone})`);
+    }
 
     // Normalize vehicleId to string
     const challanObj = savedChallan.toObject();
