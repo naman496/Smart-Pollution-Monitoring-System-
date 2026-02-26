@@ -110,6 +110,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const normalizedAlerts = alertsData.map((a: any) => ({
           ...a,
           id: a._id || a.id,
+          vehicleId: a.vehicleId?._id ? a.vehicleId._id.toString() : (a.vehicleId?.toString() || a.vehicleId),
           timestamp: a.timestamp ? new Date(a.timestamp) : new Date(),
         }));
 
@@ -117,6 +118,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const normalizedChallans = challansData.map((c: any) => ({
           ...c,
           id: c._id || c.id,
+          vehicleId: c.vehicleId?._id ? c.vehicleId._id.toString() : (c.vehicleId?.toString() || c.vehicleId),
           issuedDate: c.issuedDate ? new Date(c.issuedDate) : new Date(),
         }));
 
@@ -201,12 +203,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const normalizedAlerts = alertsData.map((a: any) => ({
           ...a,
           id: a._id || a.id,
+          vehicleId: a.vehicleId?._id ? a.vehicleId._id.toString() : (a.vehicleId?.toString() || a.vehicleId),
           timestamp: a.timestamp ? new Date(a.timestamp) : new Date(),
         }));
 
         const normalizedChallans = challansData.map((c: any) => ({
           ...c,
           id: c._id || c.id,
+          vehicleId: c.vehicleId?._id ? c.vehicleId._id.toString() : (c.vehicleId?.toString() || c.vehicleId),
           issuedDate: c.issuedDate ? new Date(c.issuedDate) : new Date(),
         }));
 

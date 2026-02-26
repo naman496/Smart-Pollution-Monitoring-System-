@@ -17,8 +17,21 @@ export const VehicleDetailPage: React.FC = () => {
 
   const vehicle = vehicles.find((v) => (v.id || v._id) === id);
   const history = emissionHistory[id || ''] || [];
-  const vehicleAlerts = alerts.filter((a) => (a.vehicleId === id) || (a.vehicleId === vehicle?._id));
-  const vehicleChallans = challans.filter((c) => (c.vehicleId === id) || (c.vehicleId === vehicle?._id));
+  
+  // Get vehicle ID as string for comparison (backend now returns vehicleId as string)
+  const vehicleIdStr = vehicle ? (vehicle.id || vehicle._id || '').toString() : (id || '');
+  
+  // Filter alerts and challans by vehicle ID
+  // Backend now returns vehicleId as string, so we can do direct comparison
+  const vehicleAlerts = alerts.filter((a) => {
+    const alertVehicleId = a.vehicleId?.toString() || a.vehicleId || '';
+    return alertVehicleId === vehicleIdStr || alertVehicleId === id;
+  });
+  
+  const vehicleChallans = challans.filter((c) => {
+    const challanVehicleId = c.vehicleId?.toString() || c.vehicleId || '';
+    return challanVehicleId === vehicleIdStr || challanVehicleId === id;
+  });
 
   if (!vehicle) {
     return (

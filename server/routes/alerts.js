@@ -11,7 +11,19 @@ router.get('/', async (req, res) => {
     const alerts = await Alert.find()
       .populate('vehicleId', 'number owner')
       .sort({ timestamp: -1 });
-    res.json(alerts);
+    
+    // Normalize vehicleId to string for frontend
+    const normalizedAlerts = alerts.map(alert => {
+      const alertObj = alert.toObject();
+      if (alertObj.vehicleId && typeof alertObj.vehicleId === 'object') {
+        alertObj.vehicleId = alertObj.vehicleId._id.toString();
+      } else if (alertObj.vehicleId) {
+        alertObj.vehicleId = alertObj.vehicleId.toString();
+      }
+      return alertObj;
+    });
+    
+    res.json(normalizedAlerts);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -24,7 +36,13 @@ router.get('/:id', async (req, res) => {
     if (!alert) {
       return res.status(404).json({ message: 'Alert not found' });
     }
-    res.json(alert);
+    const alertObj = alert.toObject();
+    if (alertObj.vehicleId && typeof alertObj.vehicleId === 'object') {
+      alertObj.vehicleId = alertObj.vehicleId._id.toString();
+    } else if (alertObj.vehicleId) {
+      alertObj.vehicleId = alertObj.vehicleId.toString();
+    }
+    res.json(alertObj);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -35,7 +53,19 @@ router.get('/vehicle/:vehicleId', async (req, res) => {
   try {
     const alerts = await Alert.find({ vehicleId: req.params.vehicleId })
       .sort({ timestamp: -1 });
-    res.json(alerts);
+    
+    // Normalize vehicleId to string
+    const normalizedAlerts = alerts.map(alert => {
+      const alertObj = alert.toObject();
+      if (alertObj.vehicleId && typeof alertObj.vehicleId === 'object') {
+        alertObj.vehicleId = alertObj.vehicleId._id.toString();
+      } else if (alertObj.vehicleId) {
+        alertObj.vehicleId = alertObj.vehicleId.toString();
+      }
+      return alertObj;
+    });
+    
+    res.json(normalizedAlerts);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -72,7 +102,15 @@ router.post('/', async (req, res) => {
       console.log(`📩 SMS queued for vehicle ${vehicle.number} (${vehicle.phone})`);
     }
 
-    res.status(201).json(savedAlert);
+    // Normalize vehicleId to string
+    const alertObj = savedAlert.toObject();
+    if (alertObj.vehicleId && typeof alertObj.vehicleId === 'object') {
+      alertObj.vehicleId = alertObj.vehicleId._id.toString();
+    } else if (alertObj.vehicleId) {
+      alertObj.vehicleId = alertObj.vehicleId.toString();
+    }
+
+    res.status(201).json(alertObj);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

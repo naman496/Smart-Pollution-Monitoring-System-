@@ -10,7 +10,19 @@ router.get('/', async (req, res) => {
     const challans = await Challan.find()
       .populate('vehicleId', 'number owner')
       .sort({ issuedDate: -1 });
-    res.json(challans);
+    
+    // Normalize vehicleId to string for frontend
+    const normalizedChallans = challans.map(challan => {
+      const challanObj = challan.toObject();
+      if (challanObj.vehicleId && typeof challanObj.vehicleId === 'object') {
+        challanObj.vehicleId = challanObj.vehicleId._id.toString();
+      } else if (challanObj.vehicleId) {
+        challanObj.vehicleId = challanObj.vehicleId.toString();
+      }
+      return challanObj;
+    });
+    
+    res.json(normalizedChallans);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -23,7 +35,13 @@ router.get('/:id', async (req, res) => {
     if (!challan) {
       return res.status(404).json({ message: 'Challan not found' });
     }
-    res.json(challan);
+    const challanObj = challan.toObject();
+    if (challanObj.vehicleId && typeof challanObj.vehicleId === 'object') {
+      challanObj.vehicleId = challanObj.vehicleId._id.toString();
+    } else if (challanObj.vehicleId) {
+      challanObj.vehicleId = challanObj.vehicleId.toString();
+    }
+    res.json(challanObj);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -34,7 +52,19 @@ router.get('/vehicle/:vehicleId', async (req, res) => {
   try {
     const challans = await Challan.find({ vehicleId: req.params.vehicleId })
       .sort({ issuedDate: -1 });
-    res.json(challans);
+    
+    // Normalize vehicleId to string
+    const normalizedChallans = challans.map(challan => {
+      const challanObj = challan.toObject();
+      if (challanObj.vehicleId && typeof challanObj.vehicleId === 'object') {
+        challanObj.vehicleId = challanObj.vehicleId._id.toString();
+      } else if (challanObj.vehicleId) {
+        challanObj.vehicleId = challanObj.vehicleId.toString();
+      }
+      return challanObj;
+    });
+    
+    res.json(normalizedChallans);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -59,7 +89,15 @@ router.post('/', async (req, res) => {
     const challan = new Challan(challanData);
     const savedChallan = await challan.save();
 
-    res.status(201).json(savedChallan);
+    // Normalize vehicleId to string
+    const challanObj = savedChallan.toObject();
+    if (challanObj.vehicleId && typeof challanObj.vehicleId === 'object') {
+      challanObj.vehicleId = challanObj.vehicleId._id.toString();
+    } else if (challanObj.vehicleId) {
+      challanObj.vehicleId = challanObj.vehicleId.toString();
+    }
+
+    res.status(201).json(challanObj);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
