@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
   # Authority Dashboard UI Design
 
@@ -9,3 +10,6 @@
 
   Run `npm run dev` to start the development server.
   
+=======
+# Smart-Pollution-Monitoring-System-
+>>>>>>> d7c7e2929b1ca0a630e1c5ac1117b8235d143a54
